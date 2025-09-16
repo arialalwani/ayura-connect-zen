@@ -1,14 +1,91 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import Splash from "@/components/Splash";
+import LoginForm from "@/components/LoginForm";
+import DoctorDashboard from "@/components/DoctorDashboard";
+import PatientDashboard from "@/components/PatientDashboard";
+import PatientProfile from "@/components/PatientProfile";
+
+type UserType = 'doctor' | 'patient' | null;
+type Screen = 'splash' | 'login' | 'doctor-dashboard' | 'patient-dashboard' | 'patient-profile' | 'diet-plan-creator' | 'reports' | 'tracker' | 'chat';
 
 const Index = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
+  const [userType, setUserType] = useState<UserType>(null);
+  const [currentScreen, setCurrentScreen] = useState<Screen>('splash');
+
+  const handleUserTypeSelect = (type: UserType) => {
+    setUserType(type);
+    setCurrentScreen('login');
+  };
+
+  const handleLogin = () => {
+    if (userType === 'doctor') {
+      setCurrentScreen('doctor-dashboard');
+    } else {
+      setCurrentScreen('patient-dashboard');
+    }
+  };
+
+  const handleNavigation = (screen: string) => {
+    setCurrentScreen(screen as Screen);
+  };
+
+  const handleBack = () => {
+    if (currentScreen === 'login') {
+      setCurrentScreen('splash');
+      setUserType(null);
+    } else if (currentScreen === 'patient-profile') {
+      setCurrentScreen('doctor-dashboard');
+    } else {
+      // Handle other back navigations
+      if (userType === 'doctor') {
+        setCurrentScreen('doctor-dashboard');
+      } else {
+        setCurrentScreen('patient-dashboard');
+      }
+    }
+  };
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'splash':
+        return <Splash onUserTypeSelect={handleUserTypeSelect} />;
+      case 'login':
+        return (
+          <LoginForm 
+            userType={userType!} 
+            onBack={handleBack} 
+            onLogin={handleLogin} 
+          />
+        );
+      case 'doctor-dashboard':
+        return <DoctorDashboard onNavigate={handleNavigation} />;
+      case 'patient-dashboard':
+        return <PatientDashboard onNavigate={handleNavigation} />;
+      case 'patient-profile':
+        return <PatientProfile onBack={handleBack} onNavigate={handleNavigation} />;
+      default:
+        return (
+          <div className="min-h-screen bg-background flex items-center justify-center">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-foreground mb-4">
+                {currentScreen.split('-').map(word => 
+                  word.charAt(0).toUpperCase() + word.slice(1)
+                ).join(' ')}
+              </h2>
+              <p className="text-muted-foreground mb-6">This screen is coming soon!</p>
+              <button 
+                onClick={handleBack}
+                className="text-primary hover:underline"
+              >
+                ← Go Back
+              </button>
+            </div>
+          </div>
+        );
+    }
+  };
+
+  return renderScreen();
 };
 
 export default Index;

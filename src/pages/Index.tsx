@@ -5,13 +5,15 @@ import DoctorDashboard from "@/components/DoctorDashboard";
 import PatientDashboard from "@/components/PatientDashboard";
 import PatientProfile from "@/components/PatientProfile";
 import DoshaAssessment from "@/components/DoshaAssessment";
+import DoshaResults from "@/components/DoshaResults";
 
 type UserType = 'doctor' | 'patient' | null;
-type Screen = 'splash' | 'login' | 'doctor-dashboard' | 'patient-dashboard' | 'patient-profile' | 'diet-plan-creator' | 'reports' | 'tracker' | 'chat' | 'dosha-assessment';
+type Screen = 'splash' | 'login' | 'doctor-dashboard' | 'patient-dashboard' | 'patient-profile' | 'diet-plan-creator' | 'reports' | 'tracker' | 'chat' | 'dosha-assessment' | 'dosha-results';
 
 const Index = () => {
   const [userType, setUserType] = useState<UserType>(null);
   const [currentScreen, setCurrentScreen] = useState<Screen>('splash');
+  const [assessmentResults, setAssessmentResults] = useState<Record<string, string>>({});
 
   const handleUserTypeSelect = (type: UserType) => {
     setUserType(type);
@@ -65,7 +67,24 @@ const Index = () => {
       case 'patient-profile':
         return <PatientProfile onBack={handleBack} onNavigate={handleNavigation} />;
       case 'dosha-assessment':
-        return <DoshaAssessment onBack={handleBack} onComplete={() => handleBack()} />;
+        return <DoshaAssessment 
+          onBack={handleBack} 
+          onComplete={(results) => {
+            setAssessmentResults(results);
+            setCurrentScreen('dosha-results');
+          }} 
+        />;
+      case 'dosha-results':
+        return <DoshaResults 
+          onContinue={() => {
+            if (userType === 'doctor') {
+              setCurrentScreen('doctor-dashboard');
+            } else {
+              setCurrentScreen('patient-dashboard');
+            }
+          }}
+          assessmentResults={assessmentResults}
+        />;
       default:
         return (
           <div className="min-h-screen bg-background flex items-center justify-center">

@@ -57,7 +57,8 @@ const Index = () => {
           <LoginForm 
             userType={userType!} 
             onBack={handleBack} 
-            onLogin={handleLogin} 
+            onLogin={handleLogin}
+            onPatientSignup={() => setCurrentScreen('dosha-assessment')}
           />
         );
       case 'doctor-dashboard':

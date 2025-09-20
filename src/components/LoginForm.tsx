@@ -10,10 +10,12 @@ interface LoginFormProps {
   userType: 'doctor' | 'patient';
   onBack: () => void;
   onLogin: () => void;
+  onPatientSignup?: () => void;
 }
 
-const LoginForm = ({ userType, onBack, onLogin }: LoginFormProps) => {
+const LoginForm = ({ userType, onBack, onLogin, onPatientSignup }: LoginFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("login");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +23,12 @@ const LoginForm = ({ userType, onBack, onLogin }: LoginFormProps) => {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      onLogin();
+      // For patient signup, navigate to dosha assessment
+      if (userType === 'patient' && activeTab === 'signup' && onPatientSignup) {
+        onPatientSignup();
+      } else {
+        onLogin();
+      }
     }, 1500);
   };
 
@@ -47,7 +54,7 @@ const LoginForm = ({ userType, onBack, onLogin }: LoginFormProps) => {
             </p>
           </div>
 
-          <Tabs defaultValue="login" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 bg-secondary">
               <TabsTrigger value="login" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 Login

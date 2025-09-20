@@ -4,9 +4,10 @@ import LoginForm from "@/components/LoginForm";
 import DoctorDashboard from "@/components/DoctorDashboard";
 import PatientDashboard from "@/components/PatientDashboard";
 import PatientProfile from "@/components/PatientProfile";
+import DoshaAssessment from "@/components/DoshaAssessment";
 
 type UserType = 'doctor' | 'patient' | null;
-type Screen = 'splash' | 'login' | 'doctor-dashboard' | 'patient-dashboard' | 'patient-profile' | 'diet-plan-creator' | 'reports' | 'tracker' | 'chat';
+type Screen = 'splash' | 'login' | 'doctor-dashboard' | 'patient-dashboard' | 'patient-profile' | 'diet-plan-creator' | 'reports' | 'tracker' | 'chat' | 'dosha-assessment';
 
 const Index = () => {
   const [userType, setUserType] = useState<UserType>(null);
@@ -63,6 +64,8 @@ const Index = () => {
         return <PatientDashboard onNavigate={handleNavigation} />;
       case 'patient-profile':
         return <PatientProfile onBack={handleBack} onNavigate={handleNavigation} />;
+      case 'dosha-assessment':
+        return <DoshaAssessment onBack={handleBack} onComplete={() => handleBack()} />;
       default:
         return (
           <div className="min-h-screen bg-background flex items-center justify-center">

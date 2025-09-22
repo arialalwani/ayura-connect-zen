@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
+import WaterTracker from "./WaterTracker";
 import { 
   Leaf, 
   Coffee, 
@@ -267,6 +268,9 @@ const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
             </div>
           </div>
         </Card>
+
+        {/* Water Tracker */}
+        <WaterTracker />
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

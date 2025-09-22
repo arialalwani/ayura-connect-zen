@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import WaterTracker from "./WaterTracker";
 import MealPlanSelector from "./MealPlanSelector";
+import DoshaProgressTracker from "./DoshaProgressTracker";
 import { 
   Leaf, 
   Coffee, 
@@ -232,6 +233,9 @@ const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
             </div>
           </div>
         </Card>
+
+        {/* Dosha Progress Tracker */}
+        <DoshaProgressTracker />
 
         {/* Alternate Meal Plans */}
         <MealPlanSelector />

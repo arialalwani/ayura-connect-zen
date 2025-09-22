@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import WaterTracker from "./WaterTracker";
+import MealPlanSelector from "./MealPlanSelector";
 import { 
   Leaf, 
   Coffee, 
@@ -231,6 +232,9 @@ const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
             </div>
           </div>
         </Card>
+
+        {/* Alternate Meal Plans */}
+        <MealPlanSelector />
 
         {/* Today's Meals */}
         <Card className="shadow-sm border-0 bg-card">

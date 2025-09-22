@@ -31,6 +31,9 @@ const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
     dinner: false
   });
 
+  const [glassesConsumed, setGlassesConsumed] = useState(6);
+  const dailyWaterGoal = 8;
+
   const meals = [
     {
       id: 'breakfast',
@@ -79,6 +82,14 @@ const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
       [mealId]: !prev[mealId]
     }));
   };
+
+  const addWaterGlass = () => {
+    if (glassesConsumed < dailyWaterGoal) {
+      setGlassesConsumed(prev => prev + 1);
+    }
+  };
+
+  const waterProgressPercentage = (glassesConsumed / dailyWaterGoal) * 100;
 
   return (
     <div className="min-h-screen bg-background">
@@ -156,17 +167,38 @@ const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
                     cy="50"
                     r="40"
                     fill="none"
-                    stroke="hsl(var(--primary))"
+                    stroke="rgb(59 130 246)"
                     strokeWidth="8"
-                    strokeDasharray="188 251"
+                    strokeDasharray={`${waterProgressPercentage * 2.51} 251`}
                     className="wellness-transition"
+                    style={{
+                      filter: "drop-shadow(0 0 4px rgba(59, 130, 246, 0.3))"
+                    }}
                   />
                 </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-sm font-bold text-primary">75%</span>
+                <div className="absolute inset-0 flex items-center justify-center flex-col">
+                  <Droplets className="h-3 w-3 text-blue-500 mb-0.5" />
+                  <span className="text-xs font-bold text-blue-600">{Math.round(waterProgressPercentage)}%</span>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground">Water Intake</p>
+              <p className="text-sm text-muted-foreground mb-2">Water Intake</p>
+              <div className="text-xs text-blue-600 font-medium mb-2">
+                {glassesConsumed}/{dailyWaterGoal} glasses
+              </div>
+              <Button 
+                onClick={addWaterGlass}
+                disabled={glassesConsumed >= dailyWaterGoal}
+                size="sm"
+                className="text-xs px-2 py-1 h-6 bg-blue-500 hover:bg-blue-600 text-white border-0"
+                style={{
+                  background: glassesConsumed >= dailyWaterGoal 
+                    ? "hsl(var(--muted))" 
+                    : "rgb(59 130 246)",
+                  fontSize: "10px"
+                }}
+              >
+                {glassesConsumed >= dailyWaterGoal ? "Done!" : "+ Glass"}
+              </Button>
             </div>
             
             <div className="text-center">
@@ -269,8 +301,6 @@ const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
           </div>
         </Card>
 
-        {/* Water Tracker */}
-        <WaterTracker />
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

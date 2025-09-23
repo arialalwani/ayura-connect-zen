@@ -7,100 +7,75 @@ import { Progress } from "@/components/ui/progress";
 import WaterTracker from "./WaterTracker";
 import MealPlanSelector from "./MealPlanSelector";
 import DoshaProgressTracker from "./DoshaProgressTracker";
-import { 
-  Leaf, 
-  Coffee, 
-  Utensils, 
-  Moon, 
-  Clock,
-  CheckCircle,
-  Droplets,
-  Target,
-  TrendingUp,
-  Calendar,
-  MessageCircle
-} from "lucide-react";
-
+import { Leaf, Coffee, Utensils, Moon, Clock, CheckCircle, Droplets, Target, TrendingUp, Calendar, MessageCircle } from "lucide-react";
 interface PatientDashboardProps {
   onNavigate: (screen: string) => void;
 }
-
-const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
+const PatientDashboard = ({
+  onNavigate
+}: PatientDashboardProps) => {
   const [completedMeals, setCompletedMeals] = useState<Record<string, boolean>>({
     breakfast: false,
     lunch: false,
     snack: false,
     dinner: false
   });
-
   const [glassesConsumed, setGlassesConsumed] = useState(6);
   const dailyWaterGoal = 8;
-
-  const meals = [
-    {
-      id: 'breakfast',
-      name: 'Morning Meal',
-      time: '7:00 AM',
-      icon: Coffee,
-      foods: ['Oatmeal with almonds', 'Herbal tea', 'Seasonal fruits'],
-      calories: 320,
-      completed: completedMeals.breakfast
-    },
-    {
-      id: 'lunch',
-      name: 'Lunch',
-      time: '12:30 PM',
-      icon: Utensils,
-      foods: ['Quinoa salad', 'Steamed vegetables', 'Coconut water'],
-      calories: 480,
-      completed: completedMeals.lunch
-    },
-    {
-      id: 'snack',
-      name: 'Evening Snack',
-      time: '4:00 PM',
-      icon: Leaf,
-      foods: ['Fresh cucumber', 'Mint water', 'Dates (2 pieces)'],
-      calories: 150,
-      completed: completedMeals.snack
-    },
-    {
-      id: 'dinner',
-      name: 'Dinner',
-      time: '7:00 PM',
-      icon: Moon,
-      foods: ['Kitchari with ghee', 'Warm milk', 'Light soup'],
-      calories: 420,
-      completed: completedMeals.dinner
-    }
-  ];
-
+  const meals = [{
+    id: 'breakfast',
+    name: 'Morning Meal',
+    time: '7:00 AM',
+    icon: Coffee,
+    foods: ['Oatmeal with almonds', 'Herbal tea', 'Seasonal fruits'],
+    calories: 320,
+    completed: completedMeals.breakfast
+  }, {
+    id: 'lunch',
+    name: 'Lunch',
+    time: '12:30 PM',
+    icon: Utensils,
+    foods: ['Quinoa salad', 'Steamed vegetables', 'Coconut water'],
+    calories: 480,
+    completed: completedMeals.lunch
+  }, {
+    id: 'snack',
+    name: 'Evening Snack',
+    time: '4:00 PM',
+    icon: Leaf,
+    foods: ['Fresh cucumber', 'Mint water', 'Dates (2 pieces)'],
+    calories: 150,
+    completed: completedMeals.snack
+  }, {
+    id: 'dinner',
+    name: 'Dinner',
+    time: '7:00 PM',
+    icon: Moon,
+    foods: ['Kitchari with ghee', 'Warm milk', 'Light soup'],
+    calories: 420,
+    completed: completedMeals.dinner
+  }];
   const totalCompleted = Object.values(completedMeals).filter(Boolean).length;
-  const progressPercentage = (totalCompleted / meals.length) * 100;
-
+  const progressPercentage = totalCompleted / meals.length * 100;
   const handleMealToggle = (mealId: string) => {
     setCompletedMeals(prev => ({
       ...prev,
       [mealId]: !prev[mealId]
     }));
   };
-
   const addWaterGlass = () => {
     if (glassesConsumed < dailyWaterGoal) {
       setGlassesConsumed(prev => prev + 1);
     }
   };
-
-  const waterProgressPercentage = (glassesConsumed / dailyWaterGoal) * 100;
-
-  return (
-    <div className="min-h-screen bg-background">
+  const waterProgressPercentage = glassesConsumed / dailyWaterGoal * 100;
+  return <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-primary text-primary-foreground p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold">Good Morning, Aria 🌿</h1>
+              <h1 className="text-2xl font-bold">Good Morning🌿</h1>
               <p className="text-primary-foreground/80 mt-1">
                 Here's your personalized Ayurvedic plan for today
               </p>
@@ -127,24 +102,8 @@ const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
             <div className="text-center">
               <div className="relative w-20 h-20 mx-auto mb-3">
                 <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    fill="none"
-                    stroke="hsl(var(--progress-bg))"
-                    strokeWidth="8"
-                  />
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    fill="none"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth="8"
-                    strokeDasharray={`${progressPercentage * 2.51} 251`}
-                    className="wellness-transition"
-                  />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--progress-bg))" strokeWidth="8" />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--primary))" strokeWidth="8" strokeDasharray={`${progressPercentage * 2.51} 251`} className="wellness-transition" />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <span className="text-sm font-bold text-primary">{Math.round(progressPercentage)}%</span>
@@ -156,27 +115,10 @@ const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
             <div className="text-center">
               <div className="relative w-20 h-20 mx-auto mb-3">
                 <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    fill="none"
-                    stroke="hsl(var(--progress-bg))"
-                    strokeWidth="8"
-                  />
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    fill="none"
-                    stroke="rgb(59 130 246)"
-                    strokeWidth="8"
-                    strokeDasharray={`${waterProgressPercentage * 2.51} 251`}
-                    className="wellness-transition"
-                    style={{
-                      filter: "drop-shadow(0 0 4px rgba(59, 130, 246, 0.3))"
-                    }}
-                  />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--progress-bg))" strokeWidth="8" />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="rgb(59 130 246)" strokeWidth="8" strokeDasharray={`${waterProgressPercentage * 2.51} 251`} className="wellness-transition" style={{
+                  filter: "drop-shadow(0 0 4px rgba(59, 130, 246, 0.3))"
+                }} />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center flex-col">
                   <Droplets className="h-3 w-3 text-blue-500 mb-0.5" />
@@ -187,18 +129,10 @@ const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
               <div className="text-xs text-blue-600 font-medium mb-2">
                 {glassesConsumed}/{dailyWaterGoal} glasses
               </div>
-              <Button 
-                onClick={addWaterGlass}
-                disabled={glassesConsumed >= dailyWaterGoal}
-                size="sm"
-                className="text-xs px-2 py-1 h-6 bg-blue-500 hover:bg-blue-600 text-white border-0"
-                style={{
-                  background: glassesConsumed >= dailyWaterGoal 
-                    ? "hsl(var(--muted))" 
-                    : "rgb(59 130 246)",
-                  fontSize: "10px"
-                }}
-              >
+              <Button onClick={addWaterGlass} disabled={glassesConsumed >= dailyWaterGoal} size="sm" className="text-xs px-2 py-1 h-6 bg-blue-500 hover:bg-blue-600 text-white border-0" style={{
+              background: glassesConsumed >= dailyWaterGoal ? "hsl(var(--muted))" : "rgb(59 130 246)",
+              fontSize: "10px"
+            }}>
                 {glassesConsumed >= dailyWaterGoal ? "Done!" : "+ Glass"}
               </Button>
             </div>
@@ -206,24 +140,8 @@ const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
             <div className="text-center">
               <div className="relative w-20 h-20 mx-auto mb-3">
                 <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    fill="none"
-                    stroke="hsl(var(--progress-bg))"
-                    strokeWidth="8"
-                  />
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    fill="none"
-                    stroke="hsl(var(--success))"
-                    strokeWidth="8"
-                    strokeDasharray="226 251"
-                    className="wellness-transition"
-                  />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--progress-bg))" strokeWidth="8" />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--success))" strokeWidth="8" strokeDasharray="226 251" className="wellness-transition" />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <span className="text-sm font-bold text-success">90%</span>
@@ -242,78 +160,15 @@ const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
 
         {/* Today's Meals */}
         <Card className="shadow-sm border-0 bg-card">
-          <div className="p-6 border-b border-border">
-            <h3 className="text-lg font-semibold">Today's Meal Plan</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              Pitta-pacifying foods to balance your constitution
-            </p>
-          </div>
           
-          <div className="p-6">
-            <div className="grid gap-4">
-              {meals.map((meal) => (
-                <div 
-                  key={meal.id}
-                  className={`p-4 rounded-lg border-2 wellness-transition ${
-                    meal.completed 
-                      ? 'border-primary bg-primary-light/50' 
-                      : 'border-border bg-card hover:bg-secondary/50'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <Checkbox 
-                        checked={meal.completed}
-                        onCheckedChange={() => handleMealToggle(meal.id)}
-                        className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                      />
-                      <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-primary-light rounded-full flex items-center justify-center">
-                          <meal.icon className="h-6 w-6 text-primary" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium">{meal.name}</h4>
-                          <p className="text-sm text-muted-foreground flex items-center">
-                            <Clock className="h-3 w-3 mr-1" />
-                            {meal.time}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="text-right">
-                      <Badge variant="outline" className="border-primary text-primary">
-                        {meal.calories} cal
-                      </Badge>
-                      {meal.completed && (
-                        <div className="flex items-center text-primary text-sm mt-1">
-                          <CheckCircle className="h-3 w-3 mr-1" />
-                          Completed
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="mt-3 ml-16">
-                    <div className="flex flex-wrap gap-2">
-                      {meal.foods.map((food, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          {food}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          
+          
         </Card>
 
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="p-6 shadow-sm border-0 bg-card wellness-transition hover:shadow-md cursor-pointer"
-                onClick={() => onNavigate('tracker')}>
+          <Card className="p-6 shadow-sm border-0 bg-card wellness-transition hover:shadow-md cursor-pointer" onClick={() => onNavigate('tracker')}>
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-primary-light rounded-full flex items-center justify-center">
                 <TrendingUp className="h-6 w-6 text-primary" />
@@ -325,8 +180,7 @@ const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
             </div>
           </Card>
           
-          <Card className="p-6 shadow-sm border-0 bg-card wellness-transition hover:shadow-md cursor-pointer"
-                onClick={() => onNavigate('chat')}>
+          <Card className="p-6 shadow-sm border-0 bg-card wellness-transition hover:shadow-md cursor-pointer" onClick={() => onNavigate('chat')}>
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-primary-light rounded-full flex items-center justify-center">
                 <MessageCircle className="h-6 w-6 text-primary" />
@@ -351,8 +205,6 @@ const PatientDashboard = ({ onNavigate }: PatientDashboardProps) => {
           </Card>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default PatientDashboard;

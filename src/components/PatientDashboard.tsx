@@ -118,47 +118,93 @@ const PatientDashboard = ({
               <p className="text-sm text-muted-foreground">Meals Completed</p>
             </div>
             
-            <div className="text-center">
-              <div className="relative w-20 h-20 mx-auto mb-3">
-                <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--progress-bg))" strokeWidth="8" />
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="rgb(59 130 246)" strokeWidth="8" strokeDasharray={`${Math.min(waterProgressPercentage, 100) * 2.51} 251`} className="wellness-transition" style={{
-                  filter: "drop-shadow(0 0 4px rgba(59, 130, 246, 0.3))"
-                }} />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center flex-col">
-                  <Droplets className="h-3 w-3 text-blue-500 mb-0.5" />
-                  <span className="text-xs font-bold text-blue-600">{Math.round(Math.min(waterProgressPercentage, 100))}%</span>
-                </div>
-              </div>
-              <p className="text-sm text-muted-foreground mb-3">Water Intake</p>
-              
-              <div className="space-y-3 w-full max-w-xs mx-auto">
-                <div className="text-xs text-blue-600 font-medium">
-                  {formatWaterAmount(waterIntake)} / {formatWaterAmount(recommendedWaterIntake)}
-                </div>
-                
-                <div className="relative px-3">
-                  <Slider
-                    value={[waterIntake]}
-                    onValueChange={(value) => setWaterIntake(value[0])}
-                    max={maxWaterIntake}
-                    min={0}
-                    step={250}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>0L</span>
-                    <span className="text-blue-600 font-medium">3.5L</span>
-                    <span>5L</span>
+            <div className="space-y-4">
+              <div className="text-center">
+                <div className="relative w-20 h-20 mx-auto mb-3">
+                  <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--progress-bg))" strokeWidth="8" />
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="rgb(59 130 246)" strokeWidth="8" strokeDasharray={`${Math.min(waterProgressPercentage, 100) * 2.51} 251`} className="wellness-transition" style={{
+                    filter: "drop-shadow(0 0 4px rgba(59, 130, 246, 0.3))"
+                  }} />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center flex-col">
+                    <Droplets className="h-3 w-3 text-blue-500 mb-0.5" />
+                    <span className="text-xs font-bold text-blue-600">{Math.round(Math.min(waterProgressPercentage, 100))}%</span>
                   </div>
-                  {/* Target indicator */}
-                  <div 
-                    className="absolute top-2 w-0.5 h-4 bg-blue-500"
-                    style={{ 
-                      left: `calc(${(recommendedWaterIntake / maxWaterIntake) * 100}% + 12px - 1px)` 
-                    }}
-                  />
+                </div>
+                <p className="text-sm text-muted-foreground mb-2">Water Intake</p>
+                <p className="text-xs text-blue-600 font-medium mb-3">
+                  {formatWaterAmount(waterIntake)} of {formatWaterAmount(recommendedWaterIntake)} target
+                </p>
+              </div>
+              
+              <div className="bg-blue-50/50 p-4 rounded-lg border border-blue-100">
+                <div className="space-y-3">
+                  <div className="relative">
+                    <Slider
+                      value={[waterIntake]}
+                      onValueChange={(value) => setWaterIntake(value[0])}
+                      max={maxWaterIntake}
+                      min={0}
+                      step={250}
+                      className="w-full [&>span:first-child]:h-3 [&>span:first-child]:bg-blue-100 [&_[role=slider]]:h-5 [&_[role=slider]]:w-5 [&_[role=slider]]:bg-blue-500 [&_[role=slider]]:border-2 [&_[role=slider]]:border-white [&_[role=slider]]:shadow-lg [&>span:first-child>span]:bg-blue-500"
+                    />
+                    {/* Target line indicator */}
+                    <div 
+                      className="absolute top-0 w-0.5 h-3 bg-green-500 z-10"
+                      style={{ 
+                        left: `calc(${(recommendedWaterIntake / maxWaterIntake) * 100}% - 1px)` 
+                      }}
+                    />
+                    <div 
+                      className="absolute -top-6 text-xs text-green-600 font-medium transform -translate-x-1/2"
+                      style={{ 
+                        left: `${(recommendedWaterIntake / maxWaterIntake) * 100}%` 
+                      }}
+                    >
+                      Target
+                    </div>
+                  </div>
+                  
+                  {/* Interval marks */}
+                  <div className="relative">
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      {Array.from({ length: 21 }, (_, i) => i * 250).map((ml, index) => (
+                        <div key={ml} className="flex flex-col items-center">
+                          {index % 4 === 0 && (
+                            <>
+                              <div className="w-px h-2 bg-muted-foreground/30 mb-1" />
+                              <span className={ml === recommendedWaterIntake ? "text-green-600 font-medium" : ""}>
+                                {formatWaterAmount(ml)}
+                              </span>
+                            </>
+                          )}
+                          {index % 4 !== 0 && index % 2 === 0 && (
+                            <div className="w-px h-1 bg-muted-foreground/20" />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Quick selection buttons */}
+                  <div className="flex gap-2 justify-center pt-2">
+                    {[1000, 2000, 3500, 4000].map((amount) => (
+                      <Button
+                        key={amount}
+                        variant={waterIntake === amount ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setWaterIntake(amount)}
+                        className={`text-xs px-2 py-1 h-6 ${
+                          amount === recommendedWaterIntake 
+                            ? "border-green-500 text-green-600 hover:bg-green-50" 
+                            : ""
+                        }`}
+                      >
+                        {formatWaterAmount(amount)}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

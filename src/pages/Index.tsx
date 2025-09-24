@@ -6,14 +6,17 @@ import PatientDashboard from "@/components/PatientDashboard";
 import PatientProfile from "@/components/PatientProfile";
 import DoshaAssessment from "@/components/DoshaAssessment";
 import DoshaResults from "@/components/DoshaResults";
+import WellnessQuiz from "@/components/WellnessQuiz";
+import WellnessResults from "@/components/WellnessResults";
 
 type UserType = 'doctor' | 'patient' | null;
-type Screen = 'splash' | 'login' | 'doctor-dashboard' | 'patient-dashboard' | 'patient-profile' | 'diet-plan-creator' | 'reports' | 'tracker' | 'chat' | 'dosha-assessment' | 'dosha-results';
+type Screen = 'splash' | 'login' | 'doctor-dashboard' | 'patient-dashboard' | 'patient-profile' | 'diet-plan-creator' | 'reports' | 'tracker' | 'chat' | 'dosha-assessment' | 'dosha-results' | 'wellness-quiz' | 'wellness-results';
 
 const Index = () => {
   const [userType, setUserType] = useState<UserType>(null);
   const [currentScreen, setCurrentScreen] = useState<Screen>('splash');
   const [assessmentResults, setAssessmentResults] = useState<Record<string, string>>({});
+  const [wellnessScore, setWellnessScore] = useState<number>(0);
 
   const handleUserTypeSelect = (type: UserType) => {
     setUserType(type);
@@ -85,6 +88,25 @@ const Index = () => {
             }
           }}
           assessmentResults={assessmentResults}
+        />;
+      case 'wellness-quiz':
+        return <WellnessQuiz 
+          onBack={handleBack}
+          onComplete={(score) => {
+            setWellnessScore(score);
+            setCurrentScreen('wellness-results');
+          }}
+        />;
+      case 'wellness-results':
+        return <WellnessResults 
+          score={wellnessScore}
+          onContinue={() => {
+            if (userType === 'doctor') {
+              setCurrentScreen('doctor-dashboard');
+            } else {
+              setCurrentScreen('patient-dashboard');
+            }
+          }}
         />;
       default:
         return (

@@ -147,7 +147,14 @@ const PatientDashboard = ({
                   <span className="text-sm font-bold text-success">90%</span>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground">Wellness Score</p>
+              <p className="text-sm text-muted-foreground mb-2">Wellness Score</p>
+              <Button 
+                onClick={() => onNavigate('wellness-quiz')} 
+                size="sm" 
+                className="text-xs px-3 py-1 h-7"
+              >
+                Get Your Score
+              </Button>
             </div>
           </div>
         </Card>

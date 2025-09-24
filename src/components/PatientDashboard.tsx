@@ -10,9 +10,11 @@ import DoshaProgressTracker from "./DoshaProgressTracker";
 import { Leaf, Coffee, Utensils, Moon, Clock, CheckCircle, Droplets, Target, TrendingUp, Calendar, MessageCircle } from "lucide-react";
 interface PatientDashboardProps {
   onNavigate: (screen: string) => void;
+  wellnessScore?: number;
 }
 const PatientDashboard = ({
-  onNavigate
+  onNavigate,
+  wellnessScore = 90
 }: PatientDashboardProps) => {
   const [completedMeals, setCompletedMeals] = useState<Record<string, boolean>>({
     breakfast: false,
@@ -141,10 +143,10 @@ const PatientDashboard = ({
               <div className="relative w-20 h-20 mx-auto mb-3">
                 <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--progress-bg))" strokeWidth="8" />
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--success))" strokeWidth="8" strokeDasharray="226 251" className="wellness-transition" />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--success))" strokeWidth="8" strokeDasharray={`${wellnessScore * 2.51} 251`} className="wellness-transition" />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-sm font-bold text-success">90%</span>
+                  <span className="text-sm font-bold text-success">{wellnessScore}%</span>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground mb-2">Wellness Score</p>

@@ -67,7 +67,7 @@ const Index = () => {
       case 'doctor-dashboard':
         return <DoctorDashboard onNavigate={handleNavigation} />;
       case 'patient-dashboard':
-        return <PatientDashboard onNavigate={handleNavigation} />;
+        return <PatientDashboard onNavigate={handleNavigation} wellnessScore={wellnessScore} />;
       case 'patient-profile':
         return <PatientProfile onBack={handleBack} onNavigate={handleNavigation} />;
       case 'dosha-assessment':

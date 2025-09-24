@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
+import { Slider } from "@/components/ui/slider";
 import WaterTracker from "./WaterTracker";
 import MealPlanSelector from "./MealPlanSelector";
 import DoshaProgressTracker from "./DoshaProgressTracker";
@@ -22,8 +23,9 @@ const PatientDashboard = ({
     snack: false,
     dinner: false
   });
-  const [glassesConsumed, setGlassesConsumed] = useState(6);
-  const dailyWaterGoal = 8;
+  const [waterIntake, setWaterIntake] = useState(1750); // in ml
+  const recommendedWaterIntake = 3500; // 3.5L in ml
+  const maxWaterIntake = 5000; // 5L in ml
   const meals = [{
     id: 'breakfast',
     name: 'Morning Meal',
@@ -65,12 +67,14 @@ const PatientDashboard = ({
       [mealId]: !prev[mealId]
     }));
   };
-  const addWaterGlass = () => {
-    if (glassesConsumed < dailyWaterGoal) {
-      setGlassesConsumed(prev => prev + 1);
+  
+  const waterProgressPercentage = (waterIntake / recommendedWaterIntake) * 100;
+  const formatWaterAmount = (ml: number) => {
+    if (ml >= 1000) {
+      return `${(ml / 1000).toFixed(1)}L`;
     }
+    return `${ml}ml`;
   };
-  const waterProgressPercentage = glassesConsumed / dailyWaterGoal * 100;
   return <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-primary text-primary-foreground p-6">
@@ -118,25 +122,45 @@ const PatientDashboard = ({
               <div className="relative w-20 h-20 mx-auto mb-3">
                 <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--progress-bg))" strokeWidth="8" />
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="rgb(59 130 246)" strokeWidth="8" strokeDasharray={`${waterProgressPercentage * 2.51} 251`} className="wellness-transition" style={{
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="rgb(59 130 246)" strokeWidth="8" strokeDasharray={`${Math.min(waterProgressPercentage, 100) * 2.51} 251`} className="wellness-transition" style={{
                   filter: "drop-shadow(0 0 4px rgba(59, 130, 246, 0.3))"
                 }} />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center flex-col">
                   <Droplets className="h-3 w-3 text-blue-500 mb-0.5" />
-                  <span className="text-xs font-bold text-blue-600">{Math.round(waterProgressPercentage)}%</span>
+                  <span className="text-xs font-bold text-blue-600">{Math.round(Math.min(waterProgressPercentage, 100))}%</span>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground mb-2">Water Intake</p>
-              <div className="text-xs text-blue-600 font-medium mb-2">
-                {glassesConsumed}/{dailyWaterGoal} glasses
+              <p className="text-sm text-muted-foreground mb-3">Water Intake</p>
+              
+              <div className="space-y-3 w-full max-w-xs mx-auto">
+                <div className="text-xs text-blue-600 font-medium">
+                  {formatWaterAmount(waterIntake)} / {formatWaterAmount(recommendedWaterIntake)}
+                </div>
+                
+                <div className="relative px-3">
+                  <Slider
+                    value={[waterIntake]}
+                    onValueChange={(value) => setWaterIntake(value[0])}
+                    max={maxWaterIntake}
+                    min={0}
+                    step={250}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>0L</span>
+                    <span className="text-blue-600 font-medium">3.5L</span>
+                    <span>5L</span>
+                  </div>
+                  {/* Target indicator */}
+                  <div 
+                    className="absolute top-2 w-0.5 h-4 bg-blue-500"
+                    style={{ 
+                      left: `calc(${(recommendedWaterIntake / maxWaterIntake) * 100}% + 12px - 1px)` 
+                    }}
+                  />
+                </div>
               </div>
-              <Button onClick={addWaterGlass} disabled={glassesConsumed >= dailyWaterGoal} size="sm" className="text-xs px-2 py-1 h-6 bg-blue-500 hover:bg-blue-600 text-white border-0" style={{
-              background: glassesConsumed >= dailyWaterGoal ? "hsl(var(--muted))" : "rgb(59 130 246)",
-              fontSize: "10px"
-            }}>
-                {glassesConsumed >= dailyWaterGoal ? "Done!" : "+ Glass"}
-              </Button>
             </div>
             
             <div className="text-center">

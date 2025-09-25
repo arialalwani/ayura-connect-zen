@@ -5,10 +5,26 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import WaterTracker from "./WaterTracker";
 import MealPlanSelector from "./MealPlanSelector";
 import DoshaProgressTracker from "./DoshaProgressTracker";
-import { Leaf, Coffee, Utensils, Moon, Clock, CheckCircle, Droplets, Target, TrendingUp, Calendar, MessageCircle } from "lucide-react";
+import ExerciseTracker from "./ExerciseTracker";
+import { Leaf, Coffee, Utensils, Moon, Clock, CheckCircle, Droplets, Target, TrendingUp, Calendar, MessageCircle, Flame, Timer } from "lucide-react";
+interface ExerciseEntry {
+  id: string;
+  exercise: {
+    id: string;
+    name: string;
+    category: string;
+    defaultCaloriesPerMin: number;
+  };
+  duration: number;
+  calories: number;
+  date: Date;
+}
+
 interface PatientDashboardProps {
   onNavigate: (screen: string) => void;
   wellnessScore?: number;
@@ -26,6 +42,11 @@ const PatientDashboard = ({
   const [waterIntake, setWaterIntake] = useState(1750); // in ml
   const recommendedWaterIntake = 3500; // 3.5L in ml
   const maxWaterIntake = 5000; // 5L in ml
+  
+  // Exercise tracking state
+  const [todayExercises, setTodayExercises] = useState<ExerciseEntry[]>([]);
+  const [moveGoal, setMoveGoal] = useState(30); // in minutes
+  const [calorieGoal, setCalorieGoal] = useState(500); // daily calorie burn goal
   const meals = [{
     id: 'breakfast',
     name: 'Morning Meal',
@@ -67,6 +88,16 @@ const PatientDashboard = ({
       [mealId]: !prev[mealId]
     }));
   };
+
+  const handleExerciseAdd = (exercise: ExerciseEntry) => {
+    setTodayExercises(prev => [...prev, exercise]);
+  };
+
+  // Calculate exercise totals
+  const totalExerciseTime = todayExercises.reduce((sum, exercise) => sum + exercise.duration, 0);
+  const totalCaloriesBurned = todayExercises.reduce((sum, exercise) => sum + exercise.calories, 0);
+  const moveProgressPercentage = Math.min((totalExerciseTime / moveGoal) * 100, 100);
+  const calorieProgressPercentage = Math.min((totalCaloriesBurned / calorieGoal) * 100, 100);
   
   const waterProgressPercentage = (waterIntake / recommendedWaterIntake) * 100;
   const formatWaterAmount = (ml: number) => {
@@ -104,7 +135,7 @@ const PatientDashboard = ({
             </Badge>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
             <div className="text-center">
               <div className="relative w-20 h-20 mx-auto mb-3">
                 <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
@@ -209,6 +240,65 @@ const PatientDashboard = ({
               </div>
             </div>
             
+            {/* Move Goal */}
+            <div className="text-center">
+              <div className="relative w-20 h-20 mx-auto mb-3">
+                <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--progress-bg))" strokeWidth="8" />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="rgb(34 197 94)" strokeWidth="8" strokeDasharray={`${moveProgressPercentage * 2.51} 251`} className="wellness-transition" />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center flex-col">
+                  <Timer className="h-3 w-3 text-green-500 mb-0.5" />
+                  <span className="text-xs font-bold text-green-600">{Math.round(moveProgressPercentage)}%</span>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground mb-1">Move Goal</p>
+              <p className="text-xs text-green-600 font-medium mb-2">
+                {totalExerciseTime} of {moveGoal} mins
+              </p>
+              <div className="flex items-center gap-1 justify-center">
+                <Input
+                  type="number"
+                  value={moveGoal}
+                  onChange={(e) => setMoveGoal(parseInt(e.target.value) || 30)}
+                  className="w-12 h-6 text-xs p-1 text-center"
+                  min="10"
+                  max="120"
+                />
+                <span className="text-xs text-muted-foreground">min</span>
+              </div>
+            </div>
+
+            {/* Calorie Goal */}
+            <div className="text-center">
+              <div className="relative w-20 h-20 mx-auto mb-3">
+                <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--progress-bg))" strokeWidth="8" />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="rgb(239 68 68)" strokeWidth="8" strokeDasharray={`${calorieProgressPercentage * 2.51} 251`} className="wellness-transition" />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center flex-col">
+                  <Flame className="h-3 w-3 text-red-500 mb-0.5" />
+                  <span className="text-xs font-bold text-red-600">{Math.round(calorieProgressPercentage)}%</span>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground mb-1">Calories Burned</p>
+              <p className="text-xs text-red-600 font-medium mb-2">
+                {totalCaloriesBurned} of {calorieGoal} cal
+              </p>
+              <div className="flex items-center gap-1 justify-center">
+                <Input
+                  type="number"
+                  value={calorieGoal}
+                  onChange={(e) => setCalorieGoal(parseInt(e.target.value) || 500)}
+                  className="w-14 h-6 text-xs p-1 text-center"
+                  min="100"
+                  max="2000"
+                  step="50"
+                />
+                <span className="text-xs text-muted-foreground">cal</span>
+              </div>
+            </div>
+
             <div className="text-center">
               <div className="relative w-20 h-20 mx-auto mb-3">
                 <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
@@ -246,7 +336,12 @@ const PatientDashboard = ({
 
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <ExerciseTracker 
+            onExerciseAdd={handleExerciseAdd}
+            todayEntries={todayExercises}
+          />
+          
           <Card className="p-6 shadow-sm border-0 bg-card wellness-transition hover:shadow-md cursor-pointer" onClick={() => onNavigate('tracker')}>
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-primary-light rounded-full flex items-center justify-center">

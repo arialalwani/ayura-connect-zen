@@ -12,6 +12,8 @@ import MealPlanSelector from "./MealPlanSelector";
 import DoshaProgressTracker from "./DoshaProgressTracker";
 import ExerciseTracker from "./ExerciseTracker";
 import { Leaf, Coffee, Utensils, Moon, Clock, CheckCircle, Droplets, Target, TrendingUp, Calendar, MessageCircle, Flame, Timer } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
 interface ExerciseEntry {
   id: string;
   exercise: {
@@ -33,6 +35,18 @@ const PatientDashboard = ({
   onNavigate,
   wellnessScore = 90
 }: PatientDashboardProps) => {
+  const navigate = useNavigate();
+  
+  // Get appointments from localStorage
+  const getAppointments = () => {
+    try {
+      return JSON.parse(localStorage.getItem('appointments') || '[]');
+    } catch {
+      return [];
+    }
+  };
+  
+  const appointments = getAppointments();
   const [completedMeals, setCompletedMeals] = useState<Record<string, boolean>>({
     breakfast: false,
     lunch: false,
@@ -366,7 +380,10 @@ const PatientDashboard = ({
             </div>
           </Card>
           
-          <Card className="p-6 shadow-sm border-0 bg-card wellness-transition hover:shadow-md cursor-pointer">
+          <Card 
+            className="p-6 shadow-sm border-0 bg-card wellness-transition hover:shadow-md cursor-pointer"
+            onClick={() => navigate('/schedule-appointment')}
+          >
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-primary-light rounded-full flex items-center justify-center">
                 <Calendar className="h-6 w-6 text-primary" />
@@ -378,6 +395,39 @@ const PatientDashboard = ({
             </div>
           </Card>
         </div>
+
+        {/* Upcoming Appointments */}
+        {appointments.length > 0 && (
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold mb-4 text-foreground">Upcoming Appointments</h3>
+            <div className="grid gap-4">
+              {appointments.map((appointment: any) => (
+                <Card key={appointment.id} className="p-4 shadow-sm border-0 bg-card">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-primary-light rounded-full flex items-center justify-center">
+                        <Calendar className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-foreground">
+                          {appointment.type.replace('-', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          {format(new Date(appointment.date), 'PPP')} at {appointment.time}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <Badge variant="outline" className="bg-primary-light/10 text-primary border-primary-light">
+                        {appointment.duration} min
+                      </Badge>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>;
 };

@@ -12,12 +12,23 @@ import {
   TrendingUp,
   Clock
 } from "lucide-react";
+import { format } from 'date-fns';
 
 interface DoctorDashboardProps {
   onNavigate: (screen: string) => void;
 }
 
 const DoctorDashboard = ({ onNavigate }: DoctorDashboardProps) => {
+  // Get appointments from localStorage
+  const getAppointments = () => {
+    try {
+      return JSON.parse(localStorage.getItem('appointments') || '[]');
+    } catch {
+      return [];
+    }
+  };
+  
+  const appointments = getAppointments();
   const patients = [
     { id: 1, name: "Aria Patel", age: 28, lastVisit: "Today", status: "active", prakriti: "Pitta" },
     { id: 2, name: "Raj Kumar", age: 45, lastVisit: "2 days ago", status: "pending", prakriti: "Vata" },
@@ -204,6 +215,38 @@ const DoctorDashboard = ({ onNavigate }: DoctorDashboardProps) => {
             </Card>
           </div>
         </div>
+
+        {/* Upcoming Appointments */}
+        {appointments.length > 0 && (
+          <div className="max-w-6xl mx-auto mt-8">
+            <Card className="p-6 shadow-sm border-0 bg-card">
+              <h3 className="text-lg font-semibold mb-4">Today's Appointments</h3>
+              <div className="space-y-3">
+                {appointments.map((appointment: any) => (
+                  <div key={appointment.id} className="flex items-center justify-between p-3 rounded-lg bg-accent/30">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-primary-light rounded-full flex items-center justify-center">
+                        <Calendar className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">{appointment.patientName}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {appointment.type.replace('-', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium">{appointment.time}</p>
+                      <Badge variant="outline" className="text-xs bg-primary-light/10 text-primary border-primary-light">
+                        {appointment.duration} min
+                      </Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
